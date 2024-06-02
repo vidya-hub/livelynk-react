@@ -1,47 +1,48 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Constants from "../../utils/constants";
+import LeftPage from "./left_page/left_page";
+import RightPage from "./right_page/right_page";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserState } from "../../state/user_state/user_slice";
+import APIService from "../../api/api_service";
 
 export default function HomePage() {
-  const chats = [
-    { id: 1, name: "John Doe", message: "Hi there!", time: "10:00 AM" },
-    { id: 2, name: "Jane Smith", message: "How are you?", time: "11:30 AM" },
-    { id: 3, name: "Alice Johnson", message: "What's up?", time: "Yesterday" },
-    {
-      id: 4,
-      name: "Bob Brown",
-      message: "Long time no see!",
-      time: "2 days ago",
-    },
-  ];
   const navigate = useNavigate();
-
-  const userId = localStorage.getItem(Constants.userLocalStorageKey);
-  console.log(userId);
+  const dispatch = useDispatch();
+  const userState = useSelector(function (state: {
+    user: {
+      userId: number;
+    };
+  }) {
+    return state.user;
+  });
   useEffect(() => {
-    if (!userId || userId === "") {
+    const user = localStorage.getItem(Constants.userLocalStorageKey);
+
+    console.log(user);
+    if (!user || user === "") {
       toast.error("Please login");
       navigate("/auth");
       return;
+    } else {
+      const userJson = JSON.parse(user);
+      dispatch(setUserState(userJson));
+      init();
     }
     return () => {};
-  }, [userId, navigate]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, dispatch]);
+  async function init() {
+    // APIService.getChatContacts({
+    //   userId: userState.userId,
+    // });
+  }
   return (
-    <div className="flex flex-col border-r border-gray-300">
-      <div className="p-4 bg-gray-100 border-b border-gray-300">
-        <h2 className="text-lg font-bold">Chats</h2>
-      </div>
-      <div className="flex-1 overflow-y-auto">
-        {chats.map((chat) => (
-          <div key={chat.id} className="p-4 hover:bg-gray-100 cursor-pointer">
-            <h3 className="text-lg font-bold">{chat.name}</h3>
-            <p className="text-sm text-gray-500">{chat.message}</p>
-            <p className="text-xs text-gray-400">{chat.time}</p>
-          </div>
-        ))}
-      </div>
+    <div className="relative flex border-r dark:bg-gray-900 h-screen">
+      <LeftPage></LeftPage>
+      <RightPage></RightPage>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import APIRoutes from "../utils/api_routes";
 import User from "../types/user";
+import Contact from "../types/contact";
 
 class APIService {
   private static axiosInstance: AxiosInstance = axios.create({
@@ -59,6 +60,16 @@ class APIService {
       invitedUsers: data.user.invitedUsers || {},
       acceptedUsers: data.user.acceptedUsers || {},
       originalUsers: data.user.originalUsers || {},
+    };
+  }
+  private static transformToContact(data: any): Contact {
+    return {
+      userId: data.userId,
+      username: data.username,
+      email: data.email,
+      roomId: data.roomId,
+      chatMessages: data.chatMessages || [],
+      contactId: data.contactId || null,
     };
   }
   // Auth
@@ -121,9 +132,15 @@ class APIService {
     }
   }
 
-  static async getContacts(params: object = {}): Promise<AxiosResponse> {
+  static async getContacts({
+    userId,
+  }: {
+    userId: number;
+  }): Promise<AxiosResponse> {
     try {
-      return await this.axiosInstance.get(APIRoutes.getContacts, { params });
+      return await this.axiosInstance.get(
+        `${APIRoutes.getContacts}currentUserId=${userId}`
+      );
     } catch (error) {
       return this.handleError(error);
     }
@@ -137,11 +154,15 @@ class APIService {
     }
   }
 
-  static async getChatContacts(params: object = {}): Promise<AxiosResponse> {
+  static async getChatContacts({
+    userId,
+  }: {
+    userId: number;
+  }): Promise<AxiosResponse> {
     try {
-      return await this.axiosInstance.get(APIRoutes.getChatContacts, {
-        params,
-      });
+      return await this.axiosInstance.get(
+        `${APIRoutes.getChatContacts}currentUserId=${userId}`
+      );
     } catch (error) {
       return this.handleError(error);
     }

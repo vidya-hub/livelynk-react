@@ -1,5 +1,5 @@
 class APIRoutes {
-  static baseUrl = "https://e1d2-157-10-167-7.ngrok-free.app";
+  static baseUrl = "https://cdcf-157-10-167-7.ngrok-free.app";
 
   //auth Routes
   static login = `${APIRoutes.baseUrl}/auth/login`;
