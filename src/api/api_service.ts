@@ -158,13 +158,22 @@ class APIService {
     userId,
   }: {
     userId: number;
-  }): Promise<AxiosResponse> {
+  }): Promise<Contact[]> {
     try {
-      return await this.axiosInstance.get(
+      const response = await this.axiosInstance.get(
         `${APIRoutes.getChatContacts}currentUserId=${userId}`
       );
+      if (response.status === 200) {
+        console.log(response.data);
+
+        return response.data.data.map((contact: any) => {
+          const tfContact: Contact = this.transformToContact(contact);
+          return tfContact;
+        });
+      }
+      return [];
     } catch (error) {
-      return this.handleError(error);
+      return [];
     }
   }
 

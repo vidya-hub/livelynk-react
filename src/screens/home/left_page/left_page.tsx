@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveTab } from "../../../state/home_state/home_tab_slice";
+import ChatContactsTabContent from "./chats_tab/chat_contacts_tab_content";
+import ContactTab from "./contacts_tab/contacts_tab";
+import CallsTab from "./calls_tab/calls_tab";
 
 export default function LeftPage() {
   const dispatch = useDispatch();
@@ -15,6 +18,22 @@ export default function LeftPage() {
   }) {
     return state.homeTab;
   });
+
+  function getTabContent() {
+    switch (tabsState.activeTab) {
+      case 0:
+        return <ChatContactsTabContent />;
+
+      case 1:
+        return <ContactTab />;
+
+      case 2:
+        return <CallsTab />;
+      default:
+        return <ChatContactsTabContent />;
+    }
+  }
+
   return (
     <div className="flex-grow-1 w-2/6 border-r-2 border-gray-700">
       <div className="w-full px-3">
@@ -38,9 +57,7 @@ export default function LeftPage() {
             </button>
           ))}
         </div>
-        <div className="p-4 text-gray-50 h-auto">
-          <p>{tabsState.tabList[tabsState.activeTab].name}</p>
-        </div>
+        <div className="p-4 text-gray-50 h-auto">{getTabContent()}</div>
       </div>
     </div>
   );
