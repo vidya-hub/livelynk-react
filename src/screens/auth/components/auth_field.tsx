@@ -1,12 +1,20 @@
-import React from "react";
+import React, { forwardRef, useState } from "react";
+import PasswordToggleIcon from "../../../utils/components/password_toggle";
 
 interface AuthFieldProps {
   label: string;
   placeholder: string;
-  type: string;
+  type: React.HTMLInputTypeAttribute;
+  isPassword?: boolean;
 }
 
-export default function AuthField(props: AuthFieldProps) {
+const AuthField = forwardRef<HTMLInputElement, AuthFieldProps>((props, ref) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="mb-5">
       <label
@@ -15,13 +23,28 @@ export default function AuthField(props: AuthFieldProps) {
       >
         {props.label}
       </label>
-      <input
-        type={props.type}
-        id={props.type}
-        className="text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700  dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500 dark:focus:border-s "
-        placeholder={props.placeholder}
-        required
-      />
+      <div className="flex items-center border border-transparent focus-within:border-gray-300 dark:bg-gray-700 rounded-md max-w-sm mx-auto">
+        <input
+          ref={ref}
+          type={showPassword ? "text" : props.type}
+          id={props.placeholder}
+          style={{ caretColor: "white" }}
+          className="text-white text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 flex-grow outline-none"
+          placeholder={props.placeholder}
+          autoComplete="off"
+          required
+        />
+        {props.isPassword ? (
+          <PasswordToggleIcon
+            onTap={togglePasswordVisibility}
+            showPassword={showPassword}
+          />
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
-}
+});
+
+export default AuthField;
